@@ -5,7 +5,30 @@ import os
 from dotenv import load_dotenv
 
 # --- Load the .env file at the start of the script ---
-load_dotenv()
+# Get the parent directory (where app.py is located) to find .env file
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ENV_PATH = os.path.join(BASE_DIR, '.env')
+
+# Only load if not already loaded (app.py should load it first)
+if 'GOOGLE_API_KEY' not in os.environ:
+    # Try loading .env from multiple locations with BOM handling
+    if os.path.exists(ENV_PATH):
+        try:
+            # Handle BOM (Byte Order Mark) that Windows sometimes adds to UTF-8 files
+            with open(ENV_PATH, 'r', encoding='utf-8-sig') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#') and '=' in line:
+                        key, value = line.split('=', 1)
+                        key = key.strip()
+                        value = value.strip().strip('"').strip("'")  # Remove quotes
+                        os.environ[key] = value
+        except Exception:
+            # Fallback to standard load_dotenv
+            load_dotenv(dotenv_path=ENV_PATH, override=True)
+    else:
+        # Try auto-detection
+        load_dotenv()
 # -----------------------------------------------------
 
 class Agent:
