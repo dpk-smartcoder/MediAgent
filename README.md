@@ -17,8 +17,7 @@ Multi-agent medical diagnosis platform that runs specialist AI agents (Cardiolog
 MediAgent combines multiple domain-specific agents behind a Flask API and a React/Tailwind UI. Users upload or paste medical reports; agents analyze concurrently, and a multidisciplinary synthesizer returns a single Markdown-formatted diagnosis.
 
 ## Demo / Video
-- Demo video: _Add link (YouTube/Drive)_
-- Screenshots: _Add links/paths_
+- Demo video: https://hostwebs.site/PSXbV4
 
 ## Tech Stack
 - Backend: Flask, LangChain, Google Gemini 2.5 Flash, Flask-CORS, python-dotenv
