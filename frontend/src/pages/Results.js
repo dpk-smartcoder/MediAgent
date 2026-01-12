@@ -1,0 +1,145 @@
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+
+function Results() {
+  const [diagnosis, setDiagnosis] = useState('');
+  const [filename, setFilename] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Retrieve diagnosis from sessionStorage
+    const storedDiagnosis = sessionStorage.getItem('diagnosis');
+    const storedFilename = sessionStorage.getItem('filename');
+
+    if (!storedDiagnosis) {
+      // If no diagnosis found, redirect to home
+      navigate('/');
+      return;
+    }
+
+    setDiagnosis(storedDiagnosis);
+    setFilename(storedFilename || 'Unknown');
+  }, [navigate]);
+
+  const handleGoHome = () => {
+    // Clear session storage
+    sessionStorage.removeItem('diagnosis');
+    sessionStorage.removeItem('filename');
+    navigate('/');
+  };
+
+  if (!diagnosis) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading results...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                Diagnosis Results
+              </h1>
+              <p className="text-sm text-gray-600">
+                File: <span className="font-medium">{filename}</span>
+              </p>
+            </div>
+            <button
+              onClick={handleGoHome}
+              className="px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors shadow-md"
+            >
+              Back to Home
+            </button>
+          </div>
+        </div>
+
+        {/* Results Card */}
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <div className="mb-6">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              Comprehensive Medical Analysis
+            </h2>
+            <div className="h-1 w-24 bg-primary-600 rounded"></div>
+          </div>
+
+          {/* Markdown Content */}
+          <div className="prose prose-lg max-w-none">
+            <div className="markdown-content">
+              <ReactMarkdown
+                components={{
+                  // Custom styling for markdown elements
+                  h1: ({ node, ...props }) => (
+                    <h1 className="text-3xl font-bold text-gray-900 mt-8 mb-4" {...props} />
+                  ),
+                  h2: ({ node, ...props }) => (
+                    <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3" {...props} />
+                  ),
+                  h3: ({ node, ...props }) => (
+                    <h3 className="text-xl font-semibold text-gray-700 mt-4 mb-2" {...props} />
+                  ),
+                  p: ({ node, ...props }) => (
+                    <p className="text-gray-700 mb-4 leading-relaxed" {...props} />
+                  ),
+                  ul: ({ node, ...props }) => (
+                    <ul className="list-disc list-inside mb-4 space-y-2 text-gray-700" {...props} />
+                  ),
+                  ol: ({ node, ...props }) => (
+                    <ol className="list-decimal list-inside mb-4 space-y-2 text-gray-700" {...props} />
+                  ),
+                  li: ({ node, ...props }) => (
+                    <li className="ml-4 text-gray-700" {...props} />
+                  ),
+                  strong: ({ node, ...props }) => (
+                    <strong className="font-semibold text-gray-900" {...props} />
+                  ),
+                  em: ({ node, ...props }) => (
+                    <em className="italic text-gray-700" {...props} />
+                  ),
+                  code: ({ node, ...props }) => (
+                    <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-gray-800" {...props} />
+                  ),
+                  blockquote: ({ node, ...props }) => (
+                    <blockquote className="border-l-4 border-primary-500 pl-4 italic text-gray-600 my-4" {...props} />
+                  ),
+                }}
+              >
+                {diagnosis}
+              </ReactMarkdown>
+            </div>
+          </div>
+
+          {/* Footer Note */}
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <p className="text-xs text-gray-500 text-center">
+              This analysis is generated by AI agents and should be reviewed by qualified medical professionals.
+              This is not a substitute for professional medical advice, diagnosis, or treatment.
+            </p>
+          </div>
+        </div>
+
+        {/* Back Button (Bottom) */}
+        <div className="mt-6 text-center">
+          <button
+            onClick={handleGoHome}
+            className="px-8 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors shadow-md"
+          >
+            Back to Home
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Results;
+
